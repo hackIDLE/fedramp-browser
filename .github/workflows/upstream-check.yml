@@ -14,38 +14,38 @@ jobs:
   check-upstream:
     runs-on: ubuntu-latest
     steps:
-      - name: Check FedRAMP JSON URLs
+      - name: Check consolidated FedRAMP JSON
         run: |
           BASE_URL="https://raw.githubusercontent.com/FedRAMP/docs/main"
-          FILES=(
-            "FRMR.FRD.fedramp-definitions.json"
-            "FRMR.KSI.key-security-indicators.json"
-            "FRMR.VDR.vulnerability-detection-and-response.json"
-            "FRMR.UCM.using-cryptographic-modules.json"
-            "FRMR.RSC.recommended-secure-configuration.json"
-            "FRMR.ADS.authorization-data-sharing.json"
-            "FRMR.CCM.collaborative-continuous-monitoring.json"
-            "FRMR.FSI.fedramp-security-inbox.json"
-            "FRMR.ICP.incident-communications-procedures.json"
-            "FRMR.MAS.minimum-assessment-scope.json"
-            "FRMR.PVA.persistent-validation-and-assessment.json"
-            "FRMR.SCN.significant-change-notifications.json"
-          )
+          FILE="FRMR.documentation.json"
 
-          FAILED=0
-          for file in "${FILES[@]}"; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/$file")
-            if [ "$STATUS" != "200" ]; then
-              echo "::error::$file returned HTTP $STATUS"
-              FAILED=1
-            else
-              echo "✓ $file"
-            fi
-          done
-
-          if [ "$FAILED" = "1" ]; then
-            echo "::error::One or more FedRAMP JSON files are unavailable. The upstream repo may have changed."
+          STATUS=$(curl -s -o /tmp/fedramp-doc.json -w "%{http_code}" "$BASE_URL/$FILE")
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::$FILE returned HTTP $STATUS"
             exit 1
           fi
 
-          echo "All 12 FedRAMP JSON files are accessible."
+          echo "✓ $FILE (HTTP $STATUS)"
+
+          # Validate JSON structure
+          if ! python3 -m json.tool /tmp/fedramp-doc.json > /dev/null 2>&1; then
+            echo "::error::$FILE is not valid JSON"
+            exit 1
+          fi
+
+          echo "✓ JSON is valid"
+
+          # Check expected top-level keys
+          KEYS=$(python3 -c "import json; d=json.load(open('/tmp/fedramp-doc.json')); print(' '.join(sorted(d.keys())))")
+          echo "  Top-level keys: $KEYS"
+
+          for KEY in FRD FRR info; do
+            if ! echo "$KEYS" | grep -qw "$KEY"; then
+              echo "::error::Expected top-level key '$KEY' not found in $FILE"
+              exit 1
+            fi
+          done
+
+          echo "✓ Expected top-level keys present"
+          echo ""
+          echo "FRMR.documentation.json is accessible and valid."
