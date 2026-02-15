@@ -80,6 +80,27 @@ func (m Model) renderRequirementDetail(r model.RequirementItem) string {
 	b.WriteString(DetailValueStyle.Render(r.ID))
 	b.WriteString("\n")
 
+	// FKA (formerly known as)
+	if r.FKA != "" {
+		b.WriteString(DetailLabelStyle.Render("Formerly:"))
+		b.WriteString(DimStyle.Render(r.FKA))
+		b.WriteString("\n")
+	}
+
+	// Category
+	if r.Category != "" {
+		b.WriteString(DetailLabelStyle.Render("Category:"))
+		b.WriteString(DetailValueStyle.Render(r.Category))
+		b.WriteString("\n")
+	}
+
+	// Applicability
+	if r.Applicability != "" {
+		b.WriteString(DetailLabelStyle.Render("Applicability:"))
+		b.WriteString(DetailValueStyle.Render(r.Applicability))
+		b.WriteString("\n")
+	}
+
 	// Statement
 	b.WriteString(DetailLabelStyle.Render("Statement:"))
 	b.WriteString("\n")
@@ -115,6 +136,13 @@ func (m Model) renderDefinitionDetail(d model.DefinitionItem) string {
 	b.WriteString(DetailLabelStyle.Render("ID:"))
 	b.WriteString(DetailValueStyle.Render(d.ID))
 	b.WriteString("\n")
+
+	// FKA (formerly known as)
+	if d.FKA != "" {
+		b.WriteString(DetailLabelStyle.Render("Formerly:"))
+		b.WriteString(DimStyle.Render(d.FKA))
+		b.WriteString("\n")
+	}
 
 	// Alternatives
 	if len(d.Alts) > 0 {
@@ -170,6 +198,13 @@ func (m Model) renderIndicatorDetail(ind model.IndicatorItem) string {
 	b.WriteString(DetailLabelStyle.Render("ID:"))
 	b.WriteString(DetailValueStyle.Render(ind.ID))
 	b.WriteString("\n")
+
+	// FKA (formerly known as)
+	if ind.FKA != "" {
+		b.WriteString(DetailLabelStyle.Render("Formerly:"))
+		b.WriteString(DimStyle.Render(ind.FKA))
+		b.WriteString("\n")
+	}
 
 	// Theme
 	b.WriteString(DetailLabelStyle.Render("Theme:"))

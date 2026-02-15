@@ -27,6 +27,9 @@ const (
 // AffectsOptions defines the cycle order for affects filtering
 var AffectsOptions = []string{"", "Providers", "Agencies", "Assessors", "FedRAMP"}
 
+// KeywordOptions defines the cycle order for keyword filtering
+var KeywordOptions = []string{"", "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY"}
+
 // Messages
 type DataLoadedMsg struct {
 	Documents    []model.Document
@@ -57,7 +60,7 @@ type Model struct {
 
 	// Filters
 	documentFilter string // Filter requirements by document code
-	keywordFilter  string // Filter requirements by keyword (MUST, SHOULD)
+	keywordFilter  string // Filter requirements by keyword (MUST, MUST NOT, SHOULD, SHOULD NOT, MAY)
 	affectsFilter  string // Filter requirements by affected party (Providers, Agencies, Assessors, FedRAMP)
 
 	// Selected item for detail view
@@ -113,7 +116,7 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) fetchData() tea.Cmd {
 	return func() tea.Msg {
-		docs, err := m.apiClient.FetchAllDocuments()
+		data, err := m.apiClient.FetchConsolidatedDocument()
 		if err != nil {
 			return ErrorMsg{Err: err}
 		}
@@ -122,25 +125,29 @@ func (m Model) fetchData() tea.Cmd {
 		var definitions []model.Definition
 		var indicators []model.Indicator
 
-		// Parse each document
-		for code, data := range docs {
-			switch code {
-			case "FRD":
-				defs, err := m.apiClient.ParseDefinitions(data)
-				if err == nil {
-					definitions = defs
-				}
-			case "KSI":
-				inds, err := m.apiClient.ParseIndicators(data)
-				if err == nil {
-					indicators = inds
-				}
-			default:
-				reqs, err := m.apiClient.ParseRequirements(data, code)
-				if err == nil {
-					allRequirements = append(allRequirements, reqs...)
-				}
+		// Parse definitions from FRD section
+		if defs, err := m.apiClient.ParseDefinitions(data); err == nil {
+			definitions = defs
+		}
+
+		// Parse indicators from KSI section
+		if inds, err := m.apiClient.ParseIndicators(data); err == nil {
+			indicators = inds
+		}
+
+		// Parse requirements for each FRR process document
+		for _, code := range api.DocumentOrder {
+			if code == "FRD" || code == "KSI" {
+				continue
 			}
+			if reqs, err := m.apiClient.ParseRequirements(data, code); err == nil {
+				allRequirements = append(allRequirements, reqs...)
+			}
+		}
+
+		// Also parse KSI process requirements (KSI has both themes and process requirements)
+		if ksiReqs, err := m.apiClient.ParseRequirements(data, "KSI"); err == nil {
+			allRequirements = append(allRequirements, ksiReqs...)
 		}
 
 		// Build document list with counts and rich info
@@ -152,10 +159,8 @@ func (m Model) fetchData() tea.Cmd {
 		for i := range documents {
 			documents[i].RequirementCount = reqCounts[documents[i].Code]
 			// Enrich with info from JSON
-			if data, ok := docs[documents[i].Code]; ok {
-				if info, err := m.apiClient.ParseDocumentInfo(data); err == nil {
-					api.EnrichDocument(&documents[i], info)
-				}
+			if info, err := m.apiClient.ParseDocumentInfo(data, documents[i].Code); err == nil {
+				api.EnrichDocument(&documents[i], info)
 			}
 		}
 		// Special counts for FRD and KSI
@@ -263,6 +268,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				nextIdx := (currentIdx + 1) % len(AffectsOptions)
 				m.affectsFilter = AffectsOptions[nextIdx]
+				m.updateListForView()
+				return m, nil
+			}
+		case "k":
+			// Cycle through keyword filter in requirements view
+			if m.view == ViewRequirements {
+				currentIdx := 0
+				for i, opt := range KeywordOptions {
+					if opt == m.keywordFilter {
+						currentIdx = i
+						break
+					}
+				}
+				nextIdx := (currentIdx + 1) % len(KeywordOptions)
+				m.keywordFilter = KeywordOptions[nextIdx]
 				m.updateListForView()
 				return m, nil
 			}
@@ -402,9 +422,9 @@ func (m *Model) updateListForView() {
 			filterHints = append(filterHints, m.affectsFilter)
 		}
 		if len(filterHints) > 0 {
-			title = fmt.Sprintf("Requirements (%d) [%s] - x: affects, m/s: keyword, f: clear", len(items), strings.Join(filterHints, ", "))
+			title = fmt.Sprintf("Requirements (%d) [%s] - x: affects, k: keyword, f: clear", len(items), strings.Join(filterHints, ", "))
 		} else {
-			title = fmt.Sprintf("FedRAMP Requirements (%d) - x: affects, m: MUST, s: SHOULD", len(items))
+			title = fmt.Sprintf("FedRAMP Requirements (%d) - x: affects, m: MUST, s: SHOULD, k: cycle", len(items))
 		}
 	case ViewDefinitions:
 		items = m.getDefinitionItems()

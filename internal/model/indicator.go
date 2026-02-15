@@ -9,6 +9,7 @@ type Control struct {
 // Indicator represents a Key Security Indicator
 type Indicator struct {
 	ID           string
+	FKA          string // Formerly known as (previous ID)
 	ThemeCode    string
 	ThemeName    string
 	ThemeDesc    string

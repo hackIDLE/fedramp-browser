@@ -36,11 +36,19 @@ func (r RequirementItem) Description() string {
 	if keyword == "" {
 		keyword = "INFO"
 	}
-	return fmt.Sprintf("%s | %s | %s", r.DocumentCode, keyword, r.Impact.String())
+	desc := fmt.Sprintf("%s | %s | %s", r.DocumentCode, keyword, r.Impact.String())
+	if r.Category != "" {
+		desc += " | " + r.Category
+	}
+	return desc
 }
 
 func (r RequirementItem) FilterValue() string {
-	return r.ID + " " + r.Name + " " + r.Statement + " " + r.DocumentCode
+	val := r.ID + " " + r.Name + " " + r.Statement + " " + r.DocumentCode
+	if r.FKA != "" {
+		val += " " + r.FKA
+	}
+	return val
 }
 
 // DefinitionItem wraps Definition for the list component
@@ -64,6 +72,9 @@ func (d DefinitionItem) FilterValue() string {
 	result := d.Term + " " + d.Text
 	for _, alt := range d.Alts {
 		result += " " + alt
+	}
+	if d.FKA != "" {
+		result += " " + d.FKA
 	}
 	return result
 }
@@ -90,5 +101,9 @@ func (i IndicatorItem) Description() string {
 }
 
 func (i IndicatorItem) FilterValue() string {
-	return i.ID + " " + i.Name + " " + i.Statement + " " + i.ThemeName
+	val := i.ID + " " + i.Name + " " + i.Statement + " " + i.ThemeName
+	if i.FKA != "" {
+		val += " " + i.FKA
+	}
+	return val
 }

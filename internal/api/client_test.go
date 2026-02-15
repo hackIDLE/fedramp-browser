@@ -8,13 +8,13 @@ import (
 func TestParseKSIStructure(t *testing.T) {
 	client := NewClient()
 
-	// Fetch the actual KSI document
-	data, err := client.fetchDocument("FRMR.KSI.key-security-indicators.json")
+	// Fetch the consolidated document
+	data, err := client.FetchConsolidatedDocument()
 	if err != nil {
-		t.Fatalf("Failed to fetch KSI document: %v", err)
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
 	}
 
-	t.Logf("Fetched %d bytes of KSI data", len(data))
+	t.Logf("Fetched %d bytes of consolidated data", len(data))
 
 	// Try to parse just the raw structure first
 	var rawDoc map[string]json.RawMessage
@@ -24,10 +24,21 @@ func TestParseKSIStructure(t *testing.T) {
 
 	t.Logf("Top-level keys: %v", getKeys(rawDoc))
 
-	// Check if KSI key exists
+	// Check if KSI key exists at top level
 	ksiRaw, ok := rawDoc["KSI"]
 	if !ok {
-		t.Fatal("KSI key not found at top level")
+		t.Log("KSI key not found at top level, checking under FRR")
+		// KSI may be under FRR as a process
+		frrRaw, frrOk := rawDoc["FRR"]
+		if !frrOk {
+			t.Fatal("Neither KSI nor FRR found")
+		}
+		var frr map[string]json.RawMessage
+		if err := json.Unmarshal(frrRaw, &frr); err != nil {
+			t.Fatalf("Failed to unmarshal FRR: %v", err)
+		}
+		t.Logf("FRR keys: %v", getKeys(frr))
+		return
 	}
 
 	t.Logf("KSI raw data length: %d bytes", len(ksiRaw))
@@ -71,9 +82,9 @@ func TestParseKSIStructure(t *testing.T) {
 func TestParseIndicators(t *testing.T) {
 	client := NewClient()
 
-	data, err := client.fetchDocument("FRMR.KSI.key-security-indicators.json")
+	data, err := client.FetchConsolidatedDocument()
 	if err != nil {
-		t.Fatalf("Failed to fetch KSI document: %v", err)
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
 	}
 
 	indicators, err := client.ParseIndicators(data)
@@ -92,7 +103,7 @@ func TestParseIndicators(t *testing.T) {
 		if i >= 3 {
 			break
 		}
-		t.Logf("Indicator %d: %s - %s", i, ind.ID, ind.Name)
+		t.Logf("Indicator %d: %s - %s (fka: %s)", i, ind.ID, ind.Name, ind.FKA)
 	}
 }
 
@@ -104,60 +115,23 @@ func getKeys(m map[string]json.RawMessage) []string {
 	return keys
 }
 
-func TestParseFSIRequirements(t *testing.T) {
+func TestParseRequirements(t *testing.T) {
 	client := NewClient()
 
-	data, err := client.fetchDocument("FRMR.FSI.fedramp-security-inbox.json")
+	data, err := client.FetchConsolidatedDocument()
 	if err != nil {
-		t.Fatalf("Failed to fetch FSI document: %v", err)
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
 	}
 
-	t.Logf("Fetched %d bytes of FSI data", len(data))
+	t.Logf("Fetched %d bytes of consolidated data", len(data))
 
-	// Parse the raw structure to understand it
-	var rawDoc map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawDoc); err != nil {
-		t.Fatalf("Failed to unmarshal raw doc: %v", err)
-	}
-	t.Logf("Top-level keys: %v", getKeys(rawDoc))
-
-	// Check FRR section
-	frrRaw, ok := rawDoc["FRR"]
-	if !ok {
-		t.Fatal("FRR key not found")
-	}
-
-	var frr map[string]json.RawMessage
-	if err := json.Unmarshal(frrRaw, &frr); err != nil {
-		t.Fatalf("Failed to unmarshal FRR: %v", err)
-	}
-	t.Logf("FRR keys: %v", getKeys(frr))
-
-	// Check FSI section within FRR
-	fsiRaw, ok := frr["FSI"]
-	if !ok {
-		t.Fatal("FSI key not found in FRR")
-	}
-	t.Logf("FSI raw data: %s", string(fsiRaw)[:200])
-
-	// Try parsing as categories
-	var categories map[string]RequirementCategory
-	if err := json.Unmarshal(fsiRaw, &categories); err != nil {
-		t.Logf("Failed to parse as categories: %v", err)
-	} else {
-		t.Logf("Parsed %d categories", len(categories))
-		for name, cat := range categories {
-			t.Logf("  Category %s: %d requirements", name, len(cat.Requirements))
-		}
-	}
-
-	// Now test the actual ParseRequirements function
-	reqs, err := client.ParseRequirements(data, "FSI")
+	// Test parsing ADS requirements (known to exist)
+	reqs, err := client.ParseRequirements(data, "ADS")
 	if err != nil {
-		t.Fatalf("ParseRequirements failed: %v", err)
+		t.Fatalf("ParseRequirements for ADS failed: %v", err)
 	}
 
-	t.Logf("ParseRequirements returned %d requirements", len(reqs))
+	t.Logf("ParseRequirements returned %d ADS requirements", len(reqs))
 
 	if len(reqs) == 0 {
 		t.Error("Expected requirements but got 0")
@@ -167,6 +141,83 @@ func TestParseFSIRequirements(t *testing.T) {
 		if i >= 3 {
 			break
 		}
-		t.Logf("Requirement %d: %s - %s (keyword: %s)", i, req.ID, req.Name, req.PrimaryKeyWord)
+		t.Logf("Requirement %d: %s - %s (keyword: %s, category: %s, applicability: %s, fka: %s)",
+			i, req.ID, req.Name, req.PrimaryKeyWord, req.Category, req.Applicability, req.FKA)
+	}
+}
+
+func TestParseDefinitions(t *testing.T) {
+	client := NewClient()
+
+	data, err := client.FetchConsolidatedDocument()
+	if err != nil {
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
+	}
+
+	defs, err := client.ParseDefinitions(data)
+	if err != nil {
+		t.Fatalf("ParseDefinitions failed: %v", err)
+	}
+
+	t.Logf("Parsed %d definitions", len(defs))
+
+	if len(defs) == 0 {
+		t.Error("Expected definitions but got 0")
+	}
+
+	for i, def := range defs {
+		if i >= 3 {
+			break
+		}
+		t.Logf("Definition %d: %s - %s (fka: %s)", i, def.ID, def.Term, def.FKA)
+	}
+}
+
+func TestParseAllProcessRequirements(t *testing.T) {
+	client := NewClient()
+
+	data, err := client.FetchConsolidatedDocument()
+	if err != nil {
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
+	}
+
+	processCodes := []string{"VDR", "UCM", "SCG", "ADS", "CCM", "FSI", "ICP", "MAS", "PVA", "SCN", "KSI"}
+	totalReqs := 0
+
+	for _, code := range processCodes {
+		reqs, err := client.ParseRequirements(data, code)
+		if err != nil {
+			t.Errorf("ParseRequirements for %s failed: %v", code, err)
+			continue
+		}
+		t.Logf("  %s: %d requirements", code, len(reqs))
+		totalReqs += len(reqs)
+	}
+
+	t.Logf("Total requirements across all processes: %d", totalReqs)
+}
+
+func TestParseDocumentInfo(t *testing.T) {
+	client := NewClient()
+
+	data, err := client.FetchConsolidatedDocument()
+	if err != nil {
+		t.Fatalf("Failed to fetch consolidated document: %v", err)
+	}
+
+	// Test FRD info
+	frdInfo, err := client.ParseDocumentInfo(data, "FRD")
+	if err != nil {
+		t.Errorf("ParseDocumentInfo for FRD failed: %v", err)
+	} else {
+		t.Logf("FRD info: name=%s, short_name=%s", frdInfo.Name, frdInfo.ShortName)
+	}
+
+	// Test ADS info (a known FRR process)
+	adsInfo, err := client.ParseDocumentInfo(data, "ADS")
+	if err != nil {
+		t.Errorf("ParseDocumentInfo for ADS failed: %v", err)
+	} else {
+		t.Logf("ADS info: name=%s, short_name=%s", adsInfo.Name, adsInfo.ShortName)
 	}
 }

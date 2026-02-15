@@ -17,7 +17,7 @@ var (
 	KSIColor = lipgloss.Color("#4ECDC4") // Indicators - Teal
 	VDRColor = lipgloss.Color("#45B7D1") // Vuln Detection - Blue
 	UCMColor = lipgloss.Color("#96CEB4") // Crypto Modules - Green
-	RSCColor = lipgloss.Color("#FFEAA7") // Secure Config - Yellow
+	SCGColor = lipgloss.Color("#FFEAA7") // Secure Config Guide - Yellow
 	ADSColor = lipgloss.Color("#DDA0DD") // Auth Data Sharing - Plum
 	CCMColor = lipgloss.Color("#98D8C8") // Continuous Monitor - Mint
 	FSIColor = lipgloss.Color("#F7DC6F") // Security Inbox - Gold
@@ -33,7 +33,7 @@ var DocumentColors = map[string]lipgloss.Color{
 	"KSI": KSIColor,
 	"VDR": VDRColor,
 	"UCM": UCMColor,
-	"RSC": RSCColor,
+	"SCG": SCGColor,
 	"ADS": ADSColor,
 	"CCM": CCMColor,
 	"FSI": FSIColor,
@@ -104,8 +104,10 @@ var (
 	ImpactLowStyle  = lipgloss.NewStyle().Foreground(SecondaryColor).Bold(true)
 
 	// Keyword subtle indicator styles
-	KeywordMustStyle   = lipgloss.NewStyle().Foreground(ErrorColor)
-	KeywordShouldStyle = lipgloss.NewStyle().Foreground(WarningColor)
+	KeywordMustStyle    = lipgloss.NewStyle().Foreground(ErrorColor)
+	KeywordShouldStyle  = lipgloss.NewStyle().Foreground(WarningColor)
+	KeywordMayStyle     = lipgloss.NewStyle().Foreground(SecondaryColor)
+	KeywordMustNotStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF2D2D"))
 )
 
 // Badge styles
@@ -127,8 +129,14 @@ func KeywordBadge(keyword string) string {
 	switch keyword {
 	case "MUST":
 		bg = ErrorColor
+	case "MUST NOT":
+		bg = lipgloss.Color("#FF2D2D")
 	case "SHOULD":
 		bg = WarningColor
+	case "SHOULD NOT":
+		bg = lipgloss.Color("#CC9900")
+	case "MAY":
+		bg = SecondaryColor
 	default:
 		bg = SubtleColor
 	}
@@ -195,13 +203,19 @@ func ImpactText(low, moderate, high bool) string {
 	return DimStyle.Render("N/A")
 }
 
-// KeywordIndicator returns a subtle colored dot for MUST/SHOULD keywords
+// KeywordIndicator returns a subtle colored dot for keyword display
 func KeywordIndicator(keyword string) string {
 	switch keyword {
 	case "MUST":
 		return KeywordMustStyle.Render("●") + " " + KeywordMustStyle.Render("MUST")
+	case "MUST NOT":
+		return KeywordMustNotStyle.Render("●") + " " + KeywordMustNotStyle.Render("MUST NOT")
 	case "SHOULD":
 		return KeywordShouldStyle.Render("●") + " " + KeywordShouldStyle.Render("SHOULD")
+	case "SHOULD NOT":
+		return KeywordShouldStyle.Render("●") + " " + KeywordShouldStyle.Render("SHOULD NOT")
+	case "MAY":
+		return KeywordMayStyle.Render("●") + " " + KeywordMayStyle.Render("MAY")
 	default:
 		return ""
 	}

@@ -3,6 +3,7 @@ package model
 // Definition represents a FedRAMP term definition
 type Definition struct {
 	ID           string
+	FKA          string // Formerly known as (previous ID)
 	Term         string
 	Alts         []string
 	Text         string // The definition text
