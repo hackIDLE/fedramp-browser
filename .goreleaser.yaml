@@ -69,3 +69,24 @@ scoops:
     description: "Terminal UI for browsing FedRAMP authorized cloud services"
     license: "MIT"
 
+winget:
+  - name: fedramp
+    publisher: ethanolivertroy
+    short_description: "Terminal UI for browsing FedRAMP documentation"
+    license: MIT
+    publisher_url: https://github.com/ethanolivertroy
+    homepage: https://github.com/ethanolivertroy/fedramp-tui
+    tags:
+      - security
+      - fedramp
+      - compliance
+      - cloud
+      - tui
+      - terminal
+    repository:
+      owner: ethanolivertroy
+      name: winget-pkgs
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
