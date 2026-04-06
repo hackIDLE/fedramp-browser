@@ -70,12 +70,12 @@ scoops:
     license: "MIT"
 
 winget:
-  - name: fedramp
-    publisher: ethanolivertroy
+  - name: fedramp-browser
+    publisher: hackIDLE
     short_description: "Terminal UI for browsing FedRAMP documentation"
     license: MIT
-    publisher_url: https://github.com/ethanolivertroy
-    homepage: https://github.com/ethanolivertroy/fedramp-tui
+    publisher_url: https://github.com/hackIDLE
+    homepage: https://github.com/hackIDLE/fedramp-browser
     tags:
       - security
       - fedramp
@@ -84,7 +84,7 @@ winget:
       - tui
       - terminal
     repository:
-      owner: ethanolivertroy
+      owner: hackIDLE
       name: winget-pkgs
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     commit_author:
