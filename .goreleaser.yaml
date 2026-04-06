@@ -1,9 +1,9 @@
 version: 2
-project_name: fedramp
+project_name: fedramp-browser
 
 builds:
   - main: .
-    binary: fedramp
+    binary: fedramp-browser
     env:
       - CGO_ENABLED=0
     ldflags:
@@ -42,31 +42,31 @@ changelog:
 
 release:
   github:
-    owner: ethanolivertroy
-    name: fedramp-tui
+    owner: hackIDLE
+    name: fedramp-browser
 
 brews:
   - repository:
-      owner: ethanolivertroy
-      name: homebrew-sectools
+      owner: hackIDLE
+      name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     directory: Formula
-    homepage: "https://github.com/ethanolivertroy/fedramp-tui"
-    description: "Terminal UI for browsing FedRAMP authorized cloud services"
+    homepage: "https://github.com/hackIDLE/fedramp-browser"
+    description: "Terminal UI for browsing FedRAMP documentation"
     license: "MIT"
     install: |
-      bin.install "fedramp"
+      bin.install "fedramp-browser"
     test: |
-      assert_match "FedRAMP", shell_output("#{bin}/fedramp --help 2>&1", 1)
+      assert_match "FedRAMP", shell_output("#{bin}/fedramp-browser --help 2>&1", 1)
 
 scoops:
   - repository:
-      owner: ethanolivertroy
-      name: scoop-sectools
+      owner: hackIDLE
+      name: scoop-bucket
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     directory: bucket
-    homepage: "https://github.com/ethanolivertroy/fedramp-tui"
-    description: "Terminal UI for browsing FedRAMP authorized cloud services"
+    homepage: "https://github.com/hackIDLE/fedramp-browser"
+    description: "Terminal UI for browsing FedRAMP documentation"
     license: "MIT"
 
 winget:

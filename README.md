@@ -1,9 +1,9 @@
-# FedRAMP TUI
+# FedRAMP Browser
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/ethanolivertroy/fedramp-tui)](https://goreportcard.com/report/github.com/ethanolivertroy/fedramp-tui)
-[![Release](https://img.shields.io/github/v/release/ethanolivertroy/fedramp-tui)](https://github.com/ethanolivertroy/fedramp-tui/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hackIDLE/fedramp-browser)](https://goreportcard.com/report/github.com/hackIDLE/fedramp-browser)
+[![Release](https://img.shields.io/github/v/release/hackIDLE/fedramp-browser)](https://github.com/hackIDLE/fedramp-browser/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ethanolivertroy/fedramp-tui/badge)](https://scorecard.dev/viewer/?uri=github.com/ethanolivertroy/fedramp-tui)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/hackIDLE/fedramp-browser/badge)](https://scorecard.dev/viewer/?uri=github.com/hackIDLE/fedramp-browser)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11619/badge)](https://www.bestpractices.dev/projects/11619)
 
 A terminal user interface for browsing FedRAMP documentation.
@@ -24,46 +24,46 @@ A terminal user interface for browsing FedRAMP documentation.
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install ethanolivertroy/sectools/fedramp
+brew install hackIDLE/tap/fedramp-browser
 ```
 
 ### Scoop (Windows)
 
 ```powershell
-scoop bucket add sectools https://github.com/ethanolivertroy/scoop-sectools
-scoop install fedramp
+scoop bucket add hackidle https://github.com/hackIDLE/scoop-bucket
+scoop install fedramp-browser
 ```
 
 ### Download Binary
 
-Download from [Releases](https://github.com/ethanolivertroy/fedramp-tui/releases):
+Download from [Releases](https://github.com/hackIDLE/fedramp-browser/releases):
 
 | Platform | Binary |
 |----------|--------|
-| macOS (Apple Silicon) | `fedramp-darwin-arm64` |
-| macOS (Intel) | `fedramp-darwin-amd64` |
-| Linux (x64) | `fedramp-linux-amd64` |
-| Linux (ARM64) | `fedramp-linux-arm64` |
-| Windows (x64) | `fedramp-windows-amd64.exe` |
+| macOS (Apple Silicon) | `fedramp-browser-darwin-arm64` |
+| macOS (Intel) | `fedramp-browser-darwin-amd64` |
+| Linux (x64) | `fedramp-browser-linux-amd64` |
+| Linux (ARM64) | `fedramp-browser-linux-arm64` |
+| Windows (x64) | `fedramp-browser-windows-amd64.exe` |
 
 ### Go Install
 
 ```bash
-go install github.com/ethanolivertroy/fedramp-tui@latest
+go install github.com/hackIDLE/fedramp-browser@latest
 ```
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/ethanolivertroy/fedramp-tui.git
-cd fedramp-tui
-go build -o fedramp .
+git clone https://github.com/hackIDLE/fedramp-browser.git
+cd fedramp-browser
+go build -o fedramp-browser .
 ```
 
 ## Usage
 
 ```bash
-./fedramp-tui
+fedramp-browser
 ```
 
 ### Command Line Options
@@ -74,7 +74,7 @@ go build -o fedramp .
 
 ### Caching
 
-Data is cached locally at `~/.cache/fedramp-tui/` with a 24-hour TTL. On subsequent runs, the TUI loads instantly from cache. Use `--refresh` to force a fresh fetch.
+Data is cached locally at `~/.cache/fedramp-browser/` with a 24-hour TTL. On subsequent runs, the TUI loads instantly from cache. Use `--refresh` to force a fresh fetch.
 
 ### Key Bindings
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/ethanolivertroy/fedramp-tui/internal/model"
+	"github.com/hackIDLE/fedramp-browser/internal/model"
 )
 
 func TestNewModel(t *testing.T) {

@@ -1,7 +1,7 @@
 # Binaries
 fedramp
-fedramp-tui
-fedramp-tui.exe
+fedramp-browser
+fedramp-browser.exe
 *.exe
 *.exe~
 *.dll

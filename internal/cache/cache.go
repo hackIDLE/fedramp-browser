@@ -17,14 +17,14 @@ type Cache struct {
 // DefaultTTL is the default cache time-to-live
 const DefaultTTL = 24 * time.Hour
 
-// New creates a new cache with the default directory (~/.cache/fedramp-tui)
+// New creates a new cache with the default directory (~/.cache/fedramp-browser)
 func New() (*Cache, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
 	}
 
-	cacheDir := filepath.Join(homeDir, ".cache", "fedramp-tui")
+	cacheDir := filepath.Join(homeDir, ".cache", "fedramp-browser")
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
 		return nil, err
 	}

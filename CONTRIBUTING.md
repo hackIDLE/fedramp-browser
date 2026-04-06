@@ -1,12 +1,12 @@
-# Contributing to FedRAMP TUI
+# Contributing to FedRAMP Browser
 
-Thank you for your interest in contributing to FedRAMP TUI!
+Thank you for your interest in contributing to FedRAMP Browser!
 
 ## How to Contribute
 
 ### Reporting Bugs
 
-1. Check [existing issues](https://github.com/ethanolivertroy/fedramp-tui/issues) to avoid duplicates
+1. Check [existing issues](https://github.com/hackIDLE/fedramp-browser/issues) to avoid duplicates
 2. Open a new issue with:
    - Clear, descriptive title
    - Steps to reproduce
@@ -34,8 +34,8 @@ Open an issue describing:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/fedramp-tui.git
-cd fedramp-tui
+git clone https://github.com/YOUR_USERNAME/fedramp-browser.git
+cd fedramp-browser
 
 # Build
 go build ./...

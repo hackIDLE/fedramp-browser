@@ -1,4 +1,4 @@
-module github.com/ethanolivertroy/fedramp-tui
+module github.com/hackIDLE/fedramp-browser
 
 go 1.25.7
 

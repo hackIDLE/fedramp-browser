@@ -9,8 +9,8 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/ethanolivertroy/fedramp-tui/internal/api"
-	"github.com/ethanolivertroy/fedramp-tui/internal/model"
+	"github.com/hackIDLE/fedramp-browser/internal/api"
+	"github.com/hackIDLE/fedramp-browser/internal/model"
 )
 
 // ViewState represents the current view

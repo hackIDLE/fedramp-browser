@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/ethanolivertroy/fedramp-tui/internal/model"
+	"github.com/hackIDLE/fedramp-browser/internal/model"
 )
 
 // renderHeader renders the view navigation bar

@@ -7,8 +7,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ethanolivertroy/fedramp-tui/internal/cache"
-	"github.com/ethanolivertroy/fedramp-tui/internal/model"
+	"github.com/hackIDLE/fedramp-browser/internal/cache"
+	"github.com/hackIDLE/fedramp-browser/internal/model"
 )
 
 const BaseURL = "https://raw.githubusercontent.com/FedRAMP/docs/main"

@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/ethanolivertroy/fedramp-tui/internal/model"
+	"github.com/hackIDLE/fedramp-browser/internal/model"
 )
 
 // ItemDelegate handles rendering of list items

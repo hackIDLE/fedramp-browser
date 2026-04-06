@@ -6,7 +6,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/ethanolivertroy/fedramp-tui/internal/tui"
+	"github.com/hackIDLE/fedramp-browser/internal/tui"
 )
 
 func main() {
