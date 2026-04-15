@@ -1,6 +1,6 @@
 module github.com/hackIDLE/fedramp-browser
 
-go 1.25.7
+go 1.25.9
 
 require (
 	github.com/charmbracelet/bubbles v1.0.0
