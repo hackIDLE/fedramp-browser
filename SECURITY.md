@@ -32,7 +32,6 @@ This project implements the following security practices:
 - **Static Analysis**: CodeQL scans for security vulnerabilities
 - **Supply Chain Security**: All GitHub Actions are pinned to SHA hashes
 - **SBOM Generation**: Software Bill of Materials included with releases
-- **OpenSSF Scorecard**: Regular security posture assessments
 
 ## Scope
 

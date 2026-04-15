@@ -3,8 +3,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/hackIDLE/fedramp-browser)](https://goreportcard.com/report/github.com/hackIDLE/fedramp-browser)
 [![Release](https://img.shields.io/github/v/release/hackIDLE/fedramp-browser)](https://github.com/hackIDLE/fedramp-browser/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/hackIDLE/fedramp-browser/badge)](https://scorecard.dev/viewer/?uri=github.com/hackIDLE/fedramp-browser)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11619/badge)](https://www.bestpractices.dev/projects/11619)
 
 A terminal user interface for browsing FedRAMP documentation.
 

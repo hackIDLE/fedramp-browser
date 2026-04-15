@@ -12,7 +12,6 @@
 ## CI Workflows
 - **Test** — runs `go test`
 - **OSV Scanner** — checks for known vulnerabilities in dependencies and Go stdlib
-- **OpenSSF Scorecard** — security best practices score
 - **Upstream Check** — monitors upstream FedRAMP data changes
 - **Dependency Graph** — GitHub dependency tracking
 
